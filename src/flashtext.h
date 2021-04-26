@@ -172,7 +172,7 @@ void KeywordProcessor::addNonWordBoundaries(const char &nonWordChar)
  * @param prettyName
  * @return
  */
-bool KeywordProcessor::addKeyword(const string &keyword, const string &prettyName=NULL)
+bool KeywordProcessor::addKeyword(const string &keyword, const string &prettyName)
 {
     string data = keyword;
     string pretty = prettyName;
