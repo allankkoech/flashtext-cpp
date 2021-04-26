@@ -1,5 +1,5 @@
 # flashtext-cpp
-This module can be used to replace keywords in sentences or extract keywords from sentences. This is based on the [flashtext python implementation]("https://github.com/vi3k6i5/flashtext")
+This module can be used to replace keywords in sentences or extract keywords from sentences. This is based on the [flashtext python implementation](https://github.com/vi3k6i5/flashtext)
 
 # Description
 This is a header only library that implements the flashtext python library in C++. 
