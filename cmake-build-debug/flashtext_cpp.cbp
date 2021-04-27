@@ -85,6 +85,12 @@
 		<Unit filename="/home/lalanke/Documents/CPlusPlus/flashtext-cpp/examples/main.cpp">
 			<Option target="flashtext_cpp"/>
 		</Unit>
+		<Unit filename="/home/lalanke/Documents/CPlusPlus/flashtext-cpp/src/flashtext.cpp">
+			<Option target="flashtext_cpp"/>
+		</Unit>
+		<Unit filename="/home/lalanke/Documents/CPlusPlus/flashtext-cpp/src/flashtext.h">
+			<Option target="flashtext_cpp"/>
+		</Unit>
 		<Unit filename="/home/lalanke/Documents/CPlusPlus/flashtext-cpp/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

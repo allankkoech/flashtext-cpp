@@ -3,10 +3,27 @@
 //
 
 #include <iostream>
+#include <map>
+#include <string>
 #include "../src/flashtext.h"
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
+using std::cout;
+using std::endl;
+
+
+
+int main()
+{
+    KeywordProcessor key; // = KeywordProcessor(true);
+    // cout << "Trie Size: " << key.trieSize() << endl;
+
+    // Test toLowerCase function
+    // cout << key.stringToLower("XaXSVXGSJGJVgsgxgs") << endl;
+
+    // Test Contains
+    // cout << "Contains: " << key.contains("Allan") << endl;
+
+
     return 0;
 }
 

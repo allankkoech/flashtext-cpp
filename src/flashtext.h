@@ -11,8 +11,189 @@
 #include <map>
 #include <algorithm>
 
+using std::cout;
+using std::endl;
+using std::cerr;
+using std::string;
 
-using std::cout, std::endl, std::cerr, std::string;
+struct Node
+{
+    char key;
+    string first, second;
+    Node* next;
+    // Node* prev;
+    // std::map<std::string, std::string> data;
+};
+
+class Dict
+{
+public:
+    Dict()
+    {
+        n=nullptr;
+        t=nullptr;
+        h=nullptr;
+    }
+
+    Dict(const char &key, const std::string &first = "", const std::string &second="")
+    {
+        // Create a new node and insert data if any
+        n = new Node();
+        h = n;
+        t = n;
+        t->next=nullptr;
+
+        // Set the Key Value
+        n->key = key;
+
+        if( first !="" )
+        {
+            n->first=first;
+            if(second=="")
+                n->second=first;
+            else
+                n->second=second;
+        }
+
+        m_count = 1; // One node, the head node
+    }
+
+    ~Dict()
+    {
+        cout << "Clear text" << endl;
+        clearList(h);
+
+        // Delete the pointers
+        delete n;
+        delete t;
+        delete h;
+    }
+
+    void clearList(Node *head)
+    {
+        Node *current = head;
+        Node *next = nullptr;
+
+        current = h;
+        next = nullptr;
+        n = nullptr;
+        t = nullptr;
+
+        while ( current->next != nullptr )
+        {
+            next = current->next;
+            free(current);
+            current=next;
+        }
+
+        h = nullptr;
+        current = nullptr;
+        next = nullptr;
+
+        delete next;
+        delete current;
+    }
+
+    void add(const char &key, const std::string &first = "", const std::string &second="")
+    {
+        n = new Node();
+
+        if ( h==nullptr )
+        {
+            h = n;
+            t = n;
+            t->next=nullptr;
+        }
+
+        else
+        {
+            t->next = n;
+            t = t->next;
+            t->next=nullptr;
+        }
+
+        // Set the Key Value
+        n->key = key;
+
+        // Set data if its passed
+        if( first !="" )
+        {
+            n->first=first;
+            if(second=="")
+                n->second=first;
+            else
+                n->second=second;
+        }
+    }
+
+    int size()
+    {
+        Node *hd = h;
+        int count_ = 1;
+
+        while( hd->next != nullptr )
+        {
+            count_ ++;
+            hd = hd->next;
+        }
+
+        m_count = count_;
+        return count_;
+    }
+
+    Node* at(int index)
+    {
+        if( index >= size() )
+            throw "Linked List Index is out of range";
+
+        Node *current = h;
+
+        if( index == 0 )
+            return current;
+
+        int i = 0;
+        while( current->next != nullptr )
+        {
+            i++;
+            current = current->next;
+
+            if( index == i )
+                break;
+        }
+
+        return current;
+    }
+
+    int hasKey(const char &key)
+    {
+        Node *current = h;
+
+        if( h == nullptr )
+            return -1;
+
+        int index = 0;
+
+        while( true )
+        {
+            if( current->key == key )
+                return index;
+
+            if( current->next == nullptr )
+                break;
+
+            current = current->next;
+            index ++;
+        }
+
+        return -1;
+    }
+
+
+private:
+    // node, temp, head
+    Node * n, * t, * h;
+    int m_count;
+};
 
 
 class KeywordProcessor
@@ -26,6 +207,8 @@ public:
     
     int trieSize();
     bool contains(const string &word);
+    string getItem(const string &word);
+    string getItem(const string &keyword, const string &cleanName = "");
     string stringToLower(const string &word);
     void addNonWordBoundaries(const char &nonWordChar);
     bool setItem(const string &keyword, const string &prettyName=NULL);
@@ -34,148 +217,12 @@ public:
 
 private:
     // Private Data Here
+    string m_keyword;
     bool m_caseSensitive;
     int m_termsInTrie;
     std::unordered_set<char> m_whiteSpaceChars;
     std::unordered_set<char> m_nonWordBoundaries;
-    std::map<string, string> m_keywordTrieMap;
+    Dict m_keywordTrieMap;
 };
 
 #endif //FLASHTEXT_CPP_FLASHTEXT_H
-
-
-KeywordProcessor::KeywordProcessor(const bool &caseSensitive)
-    : m_caseSensitive(caseSensitive)
-{
-    cout << "Entering KeywordProcessor Class!" << endl;
-
-    m_termsInTrie = 0;
-
-    // Whitespace characters unordered set
-    m_whiteSpaceChars.insert('.');
-    m_whiteSpaceChars.insert('\t');
-    m_whiteSpaceChars.insert('\n');
-    m_whiteSpaceChars.insert('\a');
-    m_whiteSpaceChars.insert(' ');
-    m_whiteSpaceChars.insert(',');
-
-    // For Digits, Letters ( both cases (Aa) ), underscore (_)
-    char _chars[] = {'7', '0', '2', '9', '8', '3', '4', '6', '1', '5', 'v', 'Q', 'r', 'g', 'K', 'U', 'n', 'f', 's', 'G', 'E', 'M', 'W', 'a', 't', 'i', 'H', 'J', 'V', 'O', 'l', 'A', 'd', 'u', 'T', 'p', 'P', 'F', 'B', 'Z', 'q', 'o', 'D', 'c', 'y', 'X', 'Y', 'h', 'x', 'm', 'w', 'S', 'I', 'C', 'k', 'e', 'j', 'L', 'R', 'z', 'N', 'b', '_'};
-    for(const auto &s: _chars)
-    {
-        m_nonWordBoundaries.insert(s);
-    }
-}
-
-
-/**
- * Number of terms present in the keyword_trie_dict
- *
- * @return int Count of number of distinct terms in trie map
- */
-int KeywordProcessor::trieSize()
-{
-    return m_termsInTrie;
-}
-
-/**
- * Checks whether the passed word is contained in the keyword trie map
- *
- * @param word String word that you want to check
- * @return true if word is present as it is in m_keywordTrieMap then we return True, else False
- */
-bool KeywordProcessor::contains(const string &word)
-{
-    string localWord = word;
-
-    if( !m_caseSensitive )
-    {
-        // To lowercase
-        std::transform(localWord.begin(), localWord.end(), localWord.begin(),
-                       [](unsigned char c){ return std::tolower(c); });
-
-        cout << "To lower: " << localWord << endl;
-    }
-
-    // std::map<int, string> keywordTrieMap = m_keywordTrieMap;
-    return true;
-}
-
-/**
- *
- * @param word
- * @return
- */
-string stringToLower(const string &word)
-{
-    string data = word;
-    std::transform( data.begin(), data.end(), data.begin(),
-                   [](unsigned char c){ return std::tolower(c); });
-
-    return data;
-}
-
-/**
- *
- * @param keyword
- * @param prettyName
- * @return
- */
-bool KeywordProcessor::setItem(const string &keyword, const string &prettyName)
-{
-    bool status = false;
-    string pretty = prettyName;
-    string _keyword = keyword;
-
-    if( (prettyName=="") || (prettyName=="") )
-        pretty = keyword;
-
-    if ( (keyword != "") && (pretty != "") )
-    {
-        if( !m_caseSensitive )
-        _keyword = stringToLower(keyword);
-    }
-
-    std::map<string, string> currentTrieMap = m_keywordTrieMap;
-
-    for( auto &letter: _keyword )
-    {
-
-    }
-
-    return status;
-}
-
-/**
- * The new nonWordBoundary set
- *
- * @param nonWordBoundaries Set to replace the existing m_nonWordBoundary set
- */
-void KeywordProcessor::setNonWordBoundaries(const std::unordered_set<char> &nonWordBoundaries)
-{
-    m_nonWordBoundaries = nonWordBoundaries;
-}
-
-/**
- * Add a character that will be considered as part of word.
- *
- * @param nonWordChar Character to be added to the nonWordBoundarySet
- */
-void KeywordProcessor::addNonWordBoundaries(const char &nonWordChar)
-{
-    m_nonWordBoundaries.insert(nonWordChar);
-}
-
-/**
- *
- * @param keyword
- * @param prettyName
- * @return
- */
-bool KeywordProcessor::addKeyword(const string &keyword, const string &prettyName)
-{
-    string data = keyword;
-    string pretty = prettyName;
-
-
-}
